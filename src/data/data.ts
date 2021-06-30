@@ -75,7 +75,7 @@ const madness = {
       },
       {
         message: "My, this must be lucky! You become attached to a non-combat item of your choice. You suffer disadvantage on attack rolls, ability checks, and saving throws when over 30ft away from it",
-        condition: "Obsessed"
+        condition: "Infatuated"
       },
       {
         message: "I CAN’T SEE! I CAN’T HEAR! Roll a d4. On a 1, you are blinded. Any other roll, you are deafened. If you are blinded, close your eyes and play blind! If you are deafened, don’t listen to anyone other than the DM.",

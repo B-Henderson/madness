@@ -1,4 +1,9 @@
 const path = require('path');
+const env  = require('dotenv');
+
+env.config({
+    path: '.env',
+});
 
 module.exports = {
   siteMetadata: {
@@ -18,10 +23,17 @@ module.exports = {
       },
       __key: "images",
     },{
+      resolve: 'gatsby-source-contentful',
+      options: {
+        spaceId: process.env.GATSBY_CONTENTFUL_SPACEID,
+        accessToken: process.env.GATSBY_CONTENTFUL_TOKEN
+      },
+    },{
       resolve: 'gatsby-plugin-alias-imports',
       options: {
         alias: {
           components: path.resolve(__dirname, 'src/components'),
+          hooks: path.resolve(__dirname, "src/hooks"),
           data: path.resolve(__dirname, "src/data")
         },
       },
