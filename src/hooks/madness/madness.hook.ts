@@ -1,8 +1,8 @@
-import { graphql, useStaticQuery } from "gatsby";
-import { AllContentfulMadness, Madness } from "./madness.interface";
+import { graphql, useStaticQuery } from 'gatsby';
+import { AllContentfulMadness, Madness } from './madness.interface';
 
 export default (): Madness[] => {
-    const { allContentfulMadness } = useStaticQuery<AllContentfulMadness>(graphql`
+  const { allContentfulMadness } = useStaticQuery<AllContentfulMadness>(graphql`
         query{
             allContentfulMadness {
                 edges {
@@ -24,7 +24,7 @@ export default (): Madness[] => {
                 }            
             }
         }
-    `)
+    `);
 
-    return allContentfulMadness.edges
-}
+  return allContentfulMadness.edges;
+};

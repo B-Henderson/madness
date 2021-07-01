@@ -1,21 +1,17 @@
-import * as React from "react"
-import styled from 'styled-components'
+import * as React from 'react';
+import styled from 'styled-components';
 
-import Data from 'data/data'
-
+import Parchment from 'components/parchment/Parchment';
 
 const Main = styled.main`
-  background: #0A1931;
+  background: #111111;
   height: 100vh;
-`
+`;
 // markup
-const IndexPage = () => {
-  console.log(JSON.stringify(Data))
-  return (
-    <Main>
-      Hello world 1234
-    </Main>
-  )
-}
+const IndexPage = () => (
+  <Main>
+    <Parchment />
+  </Main>
+);
 
-export default IndexPage
+export default IndexPage;
