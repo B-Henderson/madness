@@ -23,11 +23,17 @@ module.exports = {
       },
       __key: 'images',
     }, {
-      resolve: 'gatsby-plugin-google-fonts',
+      resolve: '@slixites/gatsby-plugin-google-fonts',
       options: {
         fonts: [
           'La Belle Aurore',
         ],
+        display: 'swap',
+        preconnect: true,
+        attributes: {
+          rel: 'stylesheet preload prefetch',
+          as: 'style',
+        },
       },
     }, {
       resolve: 'gatsby-source-contentful',
