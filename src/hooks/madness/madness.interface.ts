@@ -11,9 +11,16 @@ export interface MadnessEffects {
 export interface Madness {
   node: {
     calculation: number;
-    duration: 'string';
+    duration: string;
     id: string;
     name: string;
+    order: number;
+    slug: string;
+    description: {
+      internal: {
+        content: string;
+      };
+    };
     effects: MadnessEffects[];
   }
 }

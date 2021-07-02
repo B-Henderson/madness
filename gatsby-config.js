@@ -26,7 +26,7 @@ module.exports = {
       resolve: '@slixites/gatsby-plugin-google-fonts',
       options: {
         fonts: [
-          'La Belle Aurore',
+          'Shadows Into Light',
         ],
         display: 'swap',
         preconnect: true,

@@ -11,6 +11,13 @@ export default (): Madness[] => {
                         duration
                         id
                         name
+                        order
+                        slug
+                        description {
+                            internal {
+                                content
+                            }
+                        }
                         effects {
                             condition
                             message {
