@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 
-import { Props } from './Path.interface';
+import madnessHook from 'hooks/madness/madness.hook';
 
-const FadeIn = keyframes`
-    0%{
-        opacity: 0;
-    }
-    75%{
-        opacity: 0.5;
-    }
-    100%{
-        opacity: 1;
-    }
-`;
+import { Effects } from './Path.interface';
 
 const Container = styled.div`
   display: grid;
@@ -55,7 +45,6 @@ const Effect = styled.div`
     grid-area: effect;
     text-align: center;
     letter-spacing: 4px;
-    font-family: ;
 `;
 const EffectTitle = styled.div`
     font-size: 1.75rem;
@@ -70,12 +59,14 @@ const EffectSpan = styled.span`
     font-size: 2rem;
 `;
 
-const Paths = ({ madness }: Props): JSX.Element => {
+const Paths = (): JSX.Element => {
+  const madness = madnessHook().sort((prev, next) => prev.node.order - next.node.order);
   const [effectContent, setEffectContent] = useState(null);
 
-  const getRandomEffect = ((effects) => {
+  const getRandomEffect = ((effects: Effects[]) => {
     setEffectContent(effects[Math.floor(Math.random() * effects.length)]);
   });
+
   return (
     <Container>
       <Description>

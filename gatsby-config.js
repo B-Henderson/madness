@@ -23,6 +23,10 @@ module.exports = {
       },
       __key: 'images',
     }, {
+      resolve: 'gatsby-plugin-create-client-paths',
+      options: { prefixes: ['/app/*'] },
+    },
+    {
       resolve: '@slixites/gatsby-plugin-google-fonts',
       options: {
         fonts: [
@@ -48,6 +52,7 @@ module.exports = {
           components: path.resolve(__dirname, 'src/components'),
           hooks: path.resolve(__dirname, 'src/hooks'),
           data: path.resolve(__dirname, 'src/data'),
+          utils: path.resolve(__dirname, 'src/utils'),
         },
       },
     },
