@@ -1,15 +1,17 @@
 import React, { useEffect, useContext, useCallback } from 'react';
-import styled, { StyledComponentProps } from 'styled-components';
+import styled from 'styled-components';
 import { navigate } from '@reach/router';
 import * as yup from 'yup';
-import { Formik, FormikHelpers, setNestedObjectValues } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 
 import { FirebaseContext } from 'components/firebase';
-import { nanoid } from 'nanoid';
+import checkIsClient from 'utils/IsClient';
 import { Props } from './Login.interface';
 
 interface CTAValue {
-  email: string
+  email: string;
+  password: string;
+  register: boolean;
 }
 const CTAForm = styled.form``;
 
@@ -19,29 +21,50 @@ const CTASubmit = styled.button``;
 const formSchema = yup.object().shape({
   email: yup.string()
     .email('Please enter a valid email.').required('Email is required'),
+  password: yup.string()
+    .min(8, 'Password is too short - should be 8 chars minimum.')
+    .required('password is required'),
 });
 
 const Login = ({ path }: Props): JSX.Element => {
-  const { authToken, firebase, setAuthToken } = useContext(FirebaseContext);
-  const userId = firebase.auth().currentUser.uid;
+  const {
+    authToken, firebase, setAuthToken, setUserId,
+  } = useContext(FirebaseContext);
+  const isClient = React.useMemo(() => checkIsClient(), []);
 
-  const onSubmitCTA = React.useCallback(
-    async ({ email }: CTAValue, actions: FormikHelpers<CTAValue>) => {
+  useEffect(() => {
+    const checkPermission = () => {
+      if (authToken && checkIsClient()) {
+        navigate('/app/');
+      }
+    };
+
+    if (!isClient) return;
+
+    checkPermission();
+  }, [authToken, isClient]);
+
+  const onSubmitCTA = useCallback(
+    async ({ email, password, register }: CTAValue, actions: FormikHelpers<CTAValue>) => {
       try {
         if (!firebase) {
           return;
         }
 
-        const password = nanoid();
-
-        const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const { user } = register
+          ? await firebase.auth().createUserWithEmailAndPassword(email, password)
+          : await firebase.auth().signInWithEmailAndPassword(email, password);
 
         if (user) {
           const { refreshToken } = user;
+          const { uid } = user;
           setAuthToken(refreshToken);
+          setUserId(uid);
+          navigate('/app/paths');
         }
         actions.setStatus({ errors: [], success: true });
       } catch (err) {
+        console.error(err);
         actions.setStatus({ errors: [err] });
       } finally {
         actions.setSubmitting(false);
@@ -51,7 +74,7 @@ const Login = ({ path }: Props): JSX.Element => {
 
   return (
     <Formik<CTAValue>
-      initialValues={{ email: '' }}
+      initialValues={{ email: '', password: '', register: false }}
       initialStatus={{ errors: [], success: false }}
       onSubmit={onSubmitCTA}
       validationSchema={formSchema}
@@ -64,8 +87,8 @@ const Login = ({ path }: Props): JSX.Element => {
         isSubmitting,
         isValid,
         setStatus,
+        setFieldValue,
         status,
-        touched,
       }) => (
         <CTAForm onSubmit={handleSubmit}>
           <CTAInput
@@ -81,7 +104,50 @@ const Login = ({ path }: Props): JSX.Element => {
             }}
           />
           {errors.email && <div id="feedback">{errors.email}</div>}
-          <CTASubmit disabled={!!authToken || !isValid || isSubmitting} type="submit">login</CTASubmit>
+          <CTAInput
+            type="password"
+            name="password"
+            onChange={(e) => {
+              setStatus({ errors: [], success: false });
+              handleChange(e);
+            }}
+            onBlur={(e) => {
+              setStatus({ errors: [], success: false });
+              handleBlur(e);
+            }}
+          />
+          {errors.password && (
+          <div id="feedback">
+            {errors.password}
+          </div>
+          )}
+          <CTASubmit
+            disabled={!!authToken || !isValid || isSubmitting}
+            type="button"
+            onClick={() => {
+              setFieldValue('register', false, true);
+              handleSubmit();
+            }}
+          >
+            login
+          </CTASubmit>
+          <CTASubmit
+            disabled={!!authToken || !isValid || isSubmitting}
+            type="button"
+            onClick={() => {
+              setFieldValue('register', true, true);
+              handleSubmit();
+            }}
+          >
+            register
+          </CTASubmit>
+          {
+            status.errors.length > 0
+            && status.errors.map(
+              (error:
+              { message: string, code: string }) => <div key={error.code}>{error.message}</div>,
+            )
+          }
         </CTAForm>
       )}
     </Formik>
