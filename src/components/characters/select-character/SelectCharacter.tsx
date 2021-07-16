@@ -29,6 +29,7 @@ const SelectCharacter = ({ setCharacter }: Props): JSX.Element => {
         characters && characters
           .map((character: Character) => (
             <div key={character.name}>
+              {/* eslint-disable-next-line */}
               <h3 onClick={() => setCharacter(character)}>
                 {character.name}
               </h3>
