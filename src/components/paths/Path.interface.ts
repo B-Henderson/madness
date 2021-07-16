@@ -1,7 +1,7 @@
-import { Madness } from 'hooks/madness/madness.interface';
+import { Character } from 'components/characters/Character.interface';
 
 export interface Props {
-  madness: Madness[];
+  character: Character;
 }
 
 export interface Effects{

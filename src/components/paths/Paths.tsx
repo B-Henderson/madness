@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 
 import madnessHook from 'hooks/madness/madness.hook';
 
-import { Effects } from './Path.interface';
+import { FirebaseContext } from 'components/firebase';
+import { Props } from './Path.interface';
 
 const Container = styled.div`
   display: grid;
@@ -59,29 +60,72 @@ const EffectSpan = styled.span`
     font-size: 2rem;
 `;
 
-const Paths = (): JSX.Element => {
+const Paths = ({ character }: Props): JSX.Element => {
   const madness = madnessHook().sort((prev, next) => prev.node.order - next.node.order);
   const [effectContent, setEffectContent] = useState(null);
+  const [playerCharacter, setPlayerCharacter] = useState(character);
 
-  const getRandomEffect = ((effects: Effects[]) => {
-    setEffectContent(effects[Math.floor(Math.random() * effects.length)]);
-  });
+  const { firebase, userId } = useContext(FirebaseContext);
+
+  const getAppropriateEffect = (level: number) => {
+    let effect = null;
+    switch (level) {
+      case 1:
+        effect = madness.find(({ node }) => node.slug === 'short-term');
+        effect = effect.node.effects[Math.floor(Math.random() * effect.node.effects.length)];
+        break;
+      case 2:
+        effect = madness.find(({ node }) => node.slug === 'long-term');
+        effect = effect.node.effects[Math.floor(Math.random() * effect.node.effects.length)];
+        break;
+      case 3:
+        effect = madness.find(({ node }) => node.slug === 'indefinite');
+        effect = effect.node.effects[Math.floor(Math.random() * effect.node.effects.length)];
+        break;
+      default:
+        break;
+    }
+    const characterCopy = { ...playerCharacter };
+    if (characterCopy.madnessLevel === 3) {
+      characterCopy.effects = [...characterCopy.effects, effect];
+    }
+    characterCopy.madnessLevel = characterCopy.madnessLevel + 1 < 4
+      ? characterCopy.madnessLevel += 1
+      : characterCopy.madnessLevel = 1;
+    setPlayerCharacter(characterCopy);
+    firebase.firestore().collection('players').doc(userId).collection('characters')
+      .doc(playerCharacter.name)
+      .update({ ...characterCopy });
+    return setEffectContent(effect);
+  };
 
   return (
     <Container>
       <Description>
+        {playerCharacter.name}
+        :
         I&apos;ve Travelled so far, and seen such horrors, but how long will this affect me
       </Description>
       <ButtonWrapper>
-        {madness.map(({ node }) => (
+        <div>
+          current madness:
+          {playerCharacter.madnessLevel}
+        </div>
+        {/* {madness.map(({ node }) => (
           <ChoiceButton
             key={node.id}
             onClick={() => getRandomEffect(node.effects)}
           >
             {node.name}
           </ChoiceButton>
-        ))}
+        ))} */}
+        <ChoiceButton
+          onClick={() => getAppropriateEffect(playerCharacter.madnessLevel)}
+        >
+          What did I just see...
+        </ChoiceButton>
       </ButtonWrapper>
+
       {effectContent
       && (
       <Effect>
@@ -93,6 +137,7 @@ const Paths = (): JSX.Element => {
         </EffectTitle>
         <MarkdownWrapper>
           <ReactMarkdown>{effectContent.message.internal.content}</ReactMarkdown>
+          {/* <div>{effectContent.}</div> */}
         </MarkdownWrapper>
       </Effect>
       )}

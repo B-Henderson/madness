@@ -1,9 +1,7 @@
+import { MadnessEffects } from 'hooks/madness/madness.interface';
+
 export interface Character{
   name: string;
-  effects:{
-    description: string;
-    effect: string;
-    indefinite: boolean;
-  }[]
+  effects:MadnessEffects[]
   madnessLevel: number;
 }

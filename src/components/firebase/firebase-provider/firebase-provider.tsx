@@ -15,18 +15,6 @@ const config = {
   projectId: process.env.GATSBY_FIREBASE_PROJECTID,
   storageBucket: process.env.GATSBY_FIREBASE_STORAGEBUCKET,
 };
-// let instance: firebase.app.App | null = firebase.apps.length > 0 ? firebase.apps[0] : null;
-
-// const getFirebase = () => {
-//   if (checkIsClient()) {
-//     if (instance) return instance;
-//     instance = firebase.initializeApp(config);
-//     return instance;
-//   }
-//   return null;
-// };
-
-// export default getFirebase;
 
 const FirebaseProvider: React.FC = ({ children }: any) => {
   const isClient = React.useMemo(() => checkIsClient(), []);
@@ -45,10 +33,6 @@ const FirebaseProvider: React.FC = ({ children }: any) => {
       setFirebase(firebase.default.initializeApp(config));
       setIsInitialized(true);
     });
-    // setFirebase(firebaseInstance);
-    // if (firebaseInstance) {
-    //   setIsInitialized(true);
-    // }
   }, []);
   const onSetAuthToken = (token: string) => {
     setAuthToken(token);

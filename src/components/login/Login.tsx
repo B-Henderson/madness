@@ -6,7 +6,6 @@ import { Formik, FormikHelpers } from 'formik';
 
 import { FirebaseContext } from 'components/firebase';
 import checkIsClient from 'utils/IsClient';
-import { Props } from './Login.interface';
 
 interface CTAValue {
   email: string;
@@ -26,7 +25,7 @@ const formSchema = yup.object().shape({
     .required('password is required'),
 });
 
-const Login = ({ path }: Props): JSX.Element => {
+const Login = (): JSX.Element => {
   const {
     authToken, firebase, setAuthToken, setUserId,
   } = useContext(FirebaseContext);
@@ -35,7 +34,7 @@ const Login = ({ path }: Props): JSX.Element => {
   useEffect(() => {
     const checkPermission = () => {
       if (authToken && checkIsClient()) {
-        navigate('/app/');
+        navigate('/app');
       }
     };
 
@@ -60,7 +59,7 @@ const Login = ({ path }: Props): JSX.Element => {
           const { uid } = user;
           setAuthToken(refreshToken);
           setUserId(uid);
-          navigate('/app/paths');
+          navigate('/app');
         }
         actions.setStatus({ errors: [], success: true });
       } catch (err) {

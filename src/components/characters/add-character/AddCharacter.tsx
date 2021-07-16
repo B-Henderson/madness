@@ -1,8 +1,7 @@
-import React, { useContext, useMemo, useCallback } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { FirebaseContext } from 'components/firebase';
 import * as yup from 'yup';
 import { Formik, FormikHelpers } from 'formik';
-import checkIsClient from 'utils/IsClient';
 
 interface AddValues{
   name: string;
@@ -14,7 +13,6 @@ const addSchema = yup.object().shape({
 
 const AddCharacter = () => {
   const { firebase, userId } = useContext(FirebaseContext);
-  const isClient = useMemo(() => checkIsClient(), []);
 
   const onSubmitAdd = useCallback(
     async ({ name }: AddValues, actions: FormikHelpers<AddValues>) => {
@@ -25,14 +23,12 @@ const AddCharacter = () => {
         const pushCharacter = await firebase.firestore().collection('players').doc(userId).collection('characters')
           .doc(name)
           .set({
-            effects: [{}],
-            madnessLevel: 0,
+            effects: [],
+            madnessLevel: 1,
             name,
           });
-        console.log(pushCharacter);
         actions.setStatus({ errors: [], success: true });
       } catch (err) {
-        console.error(err);
         actions.setStatus({ errors: [err] });
       } finally {
         actions.setSubmitting(false);

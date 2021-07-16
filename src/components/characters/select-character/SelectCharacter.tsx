@@ -6,8 +6,9 @@ import { FirebaseContext } from 'components/firebase';
 import checkIsClient from 'utils/IsClient';
 import { Container } from './SelectStyled';
 import { Character } from '../Character.interface';
+import { Props } from './SelectCharacter.interface';
 
-const SelectCharacter = (): JSX.Element => {
+const SelectCharacter = ({ setCharacter }: Props): JSX.Element => {
   const [characters, setCharacters] = useState<any[] | null>(null);
   const isClient = useMemo(() => checkIsClient(), []);
   const { firebase, userId } = useContext(FirebaseContext);
@@ -21,14 +22,19 @@ const SelectCharacter = (): JSX.Element => {
     };
     data();
   }, [userId, firebase]);
+
   return (
     <Container>
       {
         characters && characters
           .map((character: Character) => (
             <div key={character.name}>
-              <h3>{character.name}</h3>
-              {character.effects.map((effect) => <div key={effect.effect}>{effect.effect}</div>)}
+              <h3 onClick={() => setCharacter(character)}>
+                {character.name}
+              </h3>
+              {character
+                .effects
+                .map((effect) => <div key={effect.condition}>{effect.condition}</div>)}
             </div>
           ))
       }
